@@ -1,43 +1,101 @@
-const {PrismaClient} = require("../generated/prisma")
-const prisma = new PrismaClient()
-const jwt = require("jsonwebtoken")
-const dotenv = require("dotenv")
+const { PrismaClient } = require("../generated/prisma");
+const prisma = new PrismaClient();
+const jwt = require("jsonwebtoken");
+const dotenv = require("dotenv");
 
-dotenv.config()
+dotenv.config();
 
 module.exports = {
-    signIn: async (req,res) =>{
-        try {
-            req.body.username = req.body.username.trim()
-            req.body.password = req.body.password.trim()
+  signIn: async (req, res) => {
+    try {
+      req.body.username = req.body.username.trim();
+      req.body.password = req.body.password.trim();
 
-            if(!req.body.username || !req.body.password){
-                return res.status(400).json({message: "Username and password are required"})
-            }
+      if (!req.body.username || !req.body.password) {
+        return res
+          .status(400)
+          .json({ message: "Username and password are required" });
+      }
 
-            const user = await prisma.user.findFirst({
-                where:{
-                    username: req.body.username,
-                    password: req.body.password,
-                    status: "active",
-                }
-            })
+      const user = await prisma.user.findFirst({
+        where: {
+          username: req.body.username,
+          password: req.body.password,
+          status: "active",
+        },
+      });
 
-            if(!user){
-                return res.status(401).json({message: "Invalid username or password"})
-            }
+      if (!user) {
+        return res
+          .status(401)
+          .json({ message: "Invalid username or password" });
+      }
 
-            const payload = {
-                id: user.id,
-                username: user.username
-            }
+      const payload = {
+        id: user.id,
+        username: user.username,
+      };
 
-            const key = process.env.SECRET_KEY
-            const token = jwt.sign(payload, key , {expiresIn: "30d"})
+      const key = process.env.SECRET_KEY;
+      const token = jwt.sign(payload, key, { expiresIn: "30d" });
 
-            res.json({token: token , level: user, id: user.id})
-        } catch (error) {
-            res.status(500).json({message: error.message})
-        }
+      res.json({ token: token, level: user, id: user.id });
+    } catch (error) {
+      res.status(500).json({ message: error.message });
     }
-}
+  },
+
+  info: async (req, res) => {
+    try {
+      const token = req.headers.authorization.split(" ")[1];
+      const payload = jwt.verify(token, process.env.SECRET_KEY);
+      const user = await prisma.user.findUnique({
+        select: {
+          name: true,
+          username: true,
+          level: true,
+        },
+        where: {
+          id: payload.id,
+        },
+      });
+      res.json({ result: user });
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  },
+  update: async (req, res) => {
+    try {
+      const token = req.headers.authorization.split(" ")[1];
+      const payload = jwt.verify(token, process.env.SECRET_KEY);
+      let OldPassword = "";
+
+      if (req.body.password) {
+        OldPassword = req.body.password;
+      } else {
+        const oldUser = await prisma.user.findUnique({
+          where: {
+            id: payload.id,
+          },
+        });
+
+        OldPassword = oldUser.password;
+      }
+
+      await prisma.user.update({
+        where: {
+          id: payload.id,
+        },
+        data: {
+          name: req.body.name,
+          username: req.body.username,
+          level: req.body.level,
+          password: OldPassword,
+        },
+      });
+      res.json({ message: "success" });
+    } catch (e) {
+      res.status(500).json({ message: error.message });
+    }
+  },
+};

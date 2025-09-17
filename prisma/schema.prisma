@@ -14,23 +14,45 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User{
-  id        String @id @default(auto()) @map("_id") @db.ObjectId
-  name      String
-  username  String
-  password  String
-  level     String @default("admin")
-  status    String @default("active")
-  createAt  DateTime? @default(now())
-  updateAt  DateTime? @updatedAt
+model User {
+  id       String    @id @default(auto()) @map("_id") @db.ObjectId
+  name     String
+  username String
+  password String
+  level    String    @default("admin")
+  status   String    @default("active")
+  createAt DateTime? @default(now())
+  updateAt DateTime? @updatedAt
 }
 
-model ProductType{
-  id        String @id @default(auto()) @map("_id") @db.ObjectId
-  name      String
-  remark    String?
-  status    String @default("active")
-  createAt  DateTime? @default(now())
-  updateAt  DateTime? @updatedAt
+model ProductType {
+  id       String    @id @default(auto()) @map("_id") @db.ObjectId
+  name     String
+  remark   String?
+  status   String    @default("active")
+  createAt DateTime? @default(now())
+  updateAt DateTime? @updatedAt
+}
 
+model Material {
+  id            String          @id @default(auto()) @map("_id") @db.ObjectId
+  name          String
+  unit          String
+  price         Int
+  remark        String?
+  status        String          @default("active")
+  createAt      DateTime?       @default(now())
+  updateAt      DateTime?       @updatedAt
+  StockMaterial StockMaterial[]
+}
+
+model StockMaterial {
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  materialId String    @db.ObjectId
+  quantity   Int
+  price      Int
+  remark     String?
+  createAt   DateTime? @default(now())
+  updateAt   DateTime? @updatedAt
+  Material   Material  @relation(fields: [materialId], references: [id])
 }
