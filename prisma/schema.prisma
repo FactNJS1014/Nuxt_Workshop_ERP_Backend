@@ -56,3 +56,21 @@ model StockMaterial {
   updateAt   DateTime? @updatedAt
   Material   Material  @relation(fields: [materialId], references: [id])
 }
+
+model Packaging {
+  id       String    @id @default(auto()) @map("_id") @db.ObjectId
+  name     String
+  remark   String?
+  status   String    @default("active")
+  createAt DateTime? @default(now())
+  updateAt DateTime? @updatedAt
+}
+
+model Product {
+  id       String    @id @default(auto()) @map("_id") @db.ObjectId
+  name     String
+  remark   String?
+  status   String    @default("active")
+  createAt DateTime? @default(now())
+  updateAt DateTime? @updatedAt
+}

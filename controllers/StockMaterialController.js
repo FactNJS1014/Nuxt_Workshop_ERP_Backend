@@ -18,4 +18,30 @@ module.exports = {
       res.status(500).json({ error: error.message });
     }
   },
+  list: async (req, res) => {
+    try {
+      const stockMaterials = await prisma.stockMaterial.findMany({
+        include: {
+          Material: true,
+        },
+        orderBy: {
+          createAt: "desc",
+        },
+      });
+      res.json({ results: stockMaterials });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+  remove: async (req, res) => {
+    try {
+      await prisma.stockMaterial.delete({
+        where: {
+          id: req.params.id,
+        },
+      });
+    } catch (e) {
+      res.status(500).json({ error: e.message });
+    }
+  },
 };

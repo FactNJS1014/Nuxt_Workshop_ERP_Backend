@@ -7,6 +7,8 @@ const userController = require("./controllers/UserController");
 const productType = require("./controllers/ProductType");
 const materialController = require("./controllers/MaterialController");
 const StockMaterialController = require("./controllers/StockMaterialController");
+const PackagingController = require("./controllers/PackagingController");
+const ProductController = require("./controllers/ProductController");
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -33,6 +35,20 @@ app.post("/api/material/create", materialController.create);
 
 //stockMaterial
 app.post("/api/stockMaterial/create", StockMaterialController.create);
+app.get("/api/stockMaterial/list", StockMaterialController.list);
+app.delete("/api/stockMaterial/remove/:id", StockMaterialController.remove);
+
+//Packaging
+app.post("/api/packaging/create", PackagingController.create);
+app.get("/api/packaging/list", PackagingController.list);
+app.delete("/api/packaging/remove/:id", PackagingController.remove);
+app.put("/api/packaging/update/:id", PackagingController.update);
+
+//product
+app.delete("/api/product/remove/:id", ProductController.remove);
+app.put("/api/product/update/:id", ProductController.update);
+app.get("/api/product/list", ProductController.list);
+app.post("/api/product/create", ProductController.create);
 
 app.listen(3001, "0.0.0.0", () => {
   console.log("Server running on port 3001");
