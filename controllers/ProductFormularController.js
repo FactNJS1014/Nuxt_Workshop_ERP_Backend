@@ -2,39 +2,27 @@ const { PrismaClient } = require("../generated/prisma");
 const prisma = new PrismaClient();
 
 module.exports = {
-  create: async (req, res) => {
-    try {
-      await prisma.product.create({
-        data: req.body,
-      });
-
-      res.json({ message: "success" });
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
-  },
   list: async (req, res) => {
     try {
-      const products = await prisma.product.findMany({
+      const productFormulars = await prisma.productFormular.findMany({
         where: {
+          productId: req.params.productId,
           status: "active",
         },
         orderBy: {
           createAt: "desc",
         },
-        include: {
-          Packaging: true,
-          ProductType: true,
-        },
+        include: { Material: true },
       });
-      res.json({ results: products });
+      res.json({ results: productFormulars });
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
   },
+
   update: async (req, res) => {
     try {
-      await prisma.product.update({
+      await prisma.productFormular.update({
         data: req.body,
         where: {
           id: req.params.id,
@@ -47,13 +35,24 @@ module.exports = {
   },
   remove: async (req, res) => {
     try {
-      await prisma.product.update({
+      await prisma.productFormular.update({
         data: {
           status: "inactive",
         },
         where: {
-          id: req.params.id,
+          id: req.params.formularId,
         },
+      });
+      res.json({ message: "success" });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+
+  create: async (req, res) => {
+    try {
+      await prisma.productFormular.create({
+        data: req.body,
       });
       res.json({ message: "success" });
     } catch (error) {

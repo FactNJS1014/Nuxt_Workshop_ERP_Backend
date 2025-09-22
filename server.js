@@ -9,6 +9,10 @@ const materialController = require("./controllers/MaterialController");
 const StockMaterialController = require("./controllers/StockMaterialController");
 const PackagingController = require("./controllers/PackagingController");
 const ProductController = require("./controllers/ProductController");
+const ProductFormularController = require("./controllers/ProductFormularController");
+const ProductionPlanController = require("./controllers/ProductionPlanController");
+const ProductionController = require("./controllers/ProductionController");
+const ReportController = require("./controllers/ReportController");
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -49,6 +53,31 @@ app.delete("/api/product/remove/:id", ProductController.remove);
 app.put("/api/product/update/:id", ProductController.update);
 app.get("/api/product/list", ProductController.list);
 app.post("/api/product/create", ProductController.create);
+
+//productFormular
+
+app.get("/api/productFormular/list/:productId", ProductFormularController.list);
+app.post("/api/productFormular/create", ProductFormularController.create);
+app.put("/api/productFormular/update/:id", ProductFormularController.update);
+app.delete(
+  "/api/productFormular/remove/:formularId",
+  ProductFormularController.remove
+);
+
+//productionPlan
+app.get("/api/productionPlan/list", ProductionPlanController.list);
+app.post("/api/productionPlan/create", ProductionPlanController.create);
+app.put("/api/productionPlan/update/:id", ProductionPlanController.update);
+app.delete("/api/productionPlan/remove/:id", ProductionPlanController.remove);
+
+//production
+app.post("/api/production/create", ProductionController.create);
+app.get("/api/production/list/:productionPlanId", ProductionController.list);
+app.put("/api/production/update/:id", ProductionController.update);
+app.delete("/api/production/remove/:id", ProductionController.remove);
+
+//report
+app.post("/api/report/production", ReportController.production);
 
 app.listen(3001, "0.0.0.0", () => {
   console.log("Server running on port 3001");

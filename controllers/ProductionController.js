@@ -4,37 +4,46 @@ const prisma = new PrismaClient();
 module.exports = {
   create: async (req, res) => {
     try {
-      await prisma.product.create({
+      await prisma.production.create({
         data: req.body,
       });
-
       res.json({ message: "success" });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
   },
   list: async (req, res) => {
+    const productionPlanId = req.params.productionPlanId;
     try {
-      const products = await prisma.product.findMany({
+      const productions = await prisma.production.findMany({
         where: {
+          productionPlanId: productionPlanId,
           status: "active",
         },
         orderBy: {
           createAt: "desc",
         },
         include: {
-          Packaging: true,
-          ProductType: true,
+          ProductionPlan: {
+            include: {
+              Product: {
+                include: {
+                  Packaging: true,
+                  ProductType: true,
+                },
+              },
+            },
+          },
         },
       });
-      res.json({ results: products });
+      res.json({ results: productions });
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
   },
   update: async (req, res) => {
     try {
-      await prisma.product.update({
+      await prisma.production.update({
         data: req.body,
         where: {
           id: req.params.id,
@@ -47,7 +56,7 @@ module.exports = {
   },
   remove: async (req, res) => {
     try {
-      await prisma.product.update({
+      await prisma.production.update({
         data: {
           status: "inactive",
         },
