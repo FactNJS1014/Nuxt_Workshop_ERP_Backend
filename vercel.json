@@ -1,0 +1,17 @@
+{
+  "build": {
+    "env": {
+      "NUXT_PUBLIC_API_BASE": "/api"
+    }
+  },
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/server.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/web" 
+    }
+  ]
+}
