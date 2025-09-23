@@ -104,6 +104,4 @@ app.post(
   ReportController.sumProductPerDayInMonthAndYear
 );
 
-app.listen(3001, "0.0.0.0", () => {
-  console.log("Server running on port 3001");
-});
+module.exports = app;
