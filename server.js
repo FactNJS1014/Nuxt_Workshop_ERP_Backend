@@ -21,6 +21,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 //
 //Users
 //
+app.put("/api/user/updateUser/:id", userController.updateUser);
+app.get("/api/user/list", userController.list);
+app.delete("/api/user/remove/:id", userController.remove);
+app.post("/api/user/create", userController.create);
 app.post("/api/user/signIn", userController.signIn);
 app.get("/api/user/info", userController.info);
 app.put("/api/user/update", userController.update);
@@ -78,6 +82,27 @@ app.delete("/api/production/remove/:id", ProductionController.remove);
 
 //report
 app.post("/api/report/production", ReportController.production);
+app.get("/api/report/productsAndCost", ReportController.productsAndCost);
+app.post(
+  "/api/report/sumProductionPlanPerYearAndMonth",
+  ReportController.sumProductionPlanPerYearAndMonth
+);
+app.post(
+  "/api/report/sumProductionPerYearAndMonth",
+  ReportController.sumProductionPerYearAndMonth
+);
+app.post(
+  "/api/report/sumPriceStockMaterial",
+  ReportController.sumPriceStockMaterial
+);
+app.post(
+  "/api/report/sumProductionPerMonthAndYear",
+  ReportController.sumProductionPerMonthAndYear
+);
+app.post(
+  "/api/report/sumProductPerDayInMonthAndYear",
+  ReportController.sumProductPerDayInMonthAndYear
+);
 
 app.listen(3001, "0.0.0.0", () => {
   console.log("Server running on port 3001");

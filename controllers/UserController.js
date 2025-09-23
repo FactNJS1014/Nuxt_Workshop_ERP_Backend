@@ -98,4 +98,71 @@ module.exports = {
       res.status(500).json({ message: error.message });
     }
   },
+  create: async (req, res) => {
+    try {
+      await prisma.user.create({
+        data: req.body,
+      });
+      res.json({ message: "success" });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+  list: async (req, res) => {
+    try {
+      const users = await prisma.user.findMany({
+        where: { status: "active" },
+        orderBy: { createAt: "desc" },
+      });
+      res.json({ results: users });
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  },
+  remove: async (req, res) => {
+    try {
+      await prisma.user.update({
+        data: {
+          status: "inactive",
+        },
+        where: {
+          id: req.params.id,
+        },
+      });
+      res.json({ message: "success" });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+
+  updateUser: async (req, res) => {
+    try {
+      let OldPassword = req.body.password;
+      if (req.body.password) {
+        OldPassword = req.body.password;
+      } else {
+        const oldUser = await prisma.user.findUnique({
+          where: {
+            id: req.params.id,
+          },
+        });
+        OldPassword = oldUser.password;
+      }
+
+      await prisma.user.update({
+        data: {
+          name: req.body.name,
+          username: req.body.username,
+          level: req.body.level,
+          password: OldPassword,
+        },
+        where: {
+          id: req.params.id,
+        },
+      });
+      res.json({ message: "success" });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
 };
